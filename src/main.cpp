@@ -9,6 +9,7 @@ void effect1();
 void effect2();
 void effect3();
 bool isPressed();
+void keyPressed();
 
 GenericFP effects[3] = {&effect1, &effect2, &effect3}; //create an array of 'GenericFP' function pointers. Notice the '&' operator
 
@@ -28,6 +29,9 @@ int currentEffectIndex;
  
 void setup()
 {
+
+  delay(3000);
+
   // Добавляем ленту
   FastLED.addLeds<WS2812B, LED_PIN, RGB>(strip, LED_COUNT);
 
@@ -37,7 +41,18 @@ void setup()
 
   currentEffectIndex = 0;
 
-  delay(500);
+
+  attachInterrupt(BUTTON_PIN, keyPressed, HIGH);
+
+  Serial.begin(115200);
+
+}
+
+void keyPressed()
+{
+  Serial.println("pressed");
+  //timer1_attachInterrupt(kl);
+  //timer1_enable(TIM_DIV256,)
 }
 
 void loop()
