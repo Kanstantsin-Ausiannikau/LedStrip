@@ -86,13 +86,31 @@ void shift()
 
 void effect1()
 {
-    // Включаем все светодиоды.
   for (int i = 0; i < LED_COUNT; i++)
   {
-    strip[i] = CRGB::Red; // Красный цвет.
+    strip[i] = CRGB::Black; // Красный цвет.
   }
-  // Передаем цвета ленте.
+
   FastLED.show();
+
+  int i=0;
+
+
+  while(i<LED_COUNT)
+  {
+    int position = random16(LED_COUNT);
+
+    if (strip[position])
+    {
+      continue;
+    }
+
+    strip[position]=CRGB(random8(255),random8(255),random8(255));
+    i++;
+    FastLED.show();
+    delay(50);
+  }
+
   // Ждем 500 мс.
   delay(500);
   // Выключаем все светодиоды.
@@ -102,8 +120,6 @@ void effect1()
   }
   // Передаем цвета ленте.
   FastLED.show();
-  // Ждем 500 мс.
-  delay(500);
 }
 
 
@@ -130,5 +146,12 @@ void effect2()
 }
 void effect3()
 {
-  
+  for (int i = 0; i < LED_COUNT; i++)
+  {
+    strip[i] = CRGB::Black; // Черный цвет, т.е. выключено.
+  }
+  // Передаем цвета ленте.
+  FastLED.show();
+  // Ждем 500 мс.
+  delay(500);
 }
