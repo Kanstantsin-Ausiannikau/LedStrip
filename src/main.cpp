@@ -45,19 +45,19 @@ void setup()
   debounceTimeCounter = 0;
 
 
-  attachInterrupt(BUTTON_PIN, keyPressed, HIGH);
+  //attachInterrupt(BUTTON_PIN, keyPressed, HIGH);
 
   Serial.begin(115200);
 
 }
 
-void keyPressed()
-{
-  Serial.println("pressed");
-  //timer1_attachInterrupt(debounceTime);
-  //timer1_enable(TIM_DIV256, TIM_EDGE, TIM_LOOP);
+// void keyPressed()
+// {
+//   Serial.println("pressed");
+//   //timer1_attachInterrupt(debounceTime);
+//   //timer1_enable(TIM_DIV256, TIM_EDGE, TIM_LOOP);
 
-}
+// }
 
 // void debounceTime()
 // {
@@ -86,7 +86,7 @@ void loop()
   //   }
   // }
   
-
+  Serial.println("pressed");
 
   effects[currentEffectIndex]();
 }
