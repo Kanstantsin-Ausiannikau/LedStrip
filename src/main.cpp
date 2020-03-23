@@ -54,60 +54,60 @@ void setup()
 void keyPressed()
 {
   Serial.println("pressed");
-  timer1_attachInterrupt(debounceTime);
-  timer1_enable(TIM_DIV256, TIM_EDGE, TIM_LOOP);
+  //timer1_attachInterrupt(debounceTime);
+  //timer1_enable(TIM_DIV256, TIM_EDGE, TIM_LOOP);
 
 }
 
-void debounceTime()
-{
-  debounceTimeCounter++;
+// void debounceTime()
+// {
+//   debounceTimeCounter++;
 
-  if (debounceTimeCounter==10000)
-  {
-    debounceTimeCounter=0;
-    timer1_disable();
+//   if (debounceTimeCounter==10000)
+//   {
+//     debounceTimeCounter=0;
+//     timer1_disable();
 
-    Serial.println("debunced");
-  }
+//     Serial.println("debunced");
+//   }
 
-}
+// }
 
 void loop()
 {
   
-  if (isPressed())
-  {
-    currentEffectIndex++;
+  // if (isPressed())
+  // {
+  //   currentEffectIndex++;
 
-    if (currentEffectIndex==sizeof(effects) / sizeof(int))
-    {
-      currentEffectIndex = 0;
-    }
-  }
+  //   if (currentEffectIndex==sizeof(effects) / sizeof(int))
+  //   {
+  //     currentEffectIndex = 0;
+  //   }
+  // }
   
 
 
   effects[currentEffectIndex]();
 }
 
-bool isPressed()
-{
-  bool isPressButton = false;
+// bool isPressed()
+// {
+//   bool isPressButton = false;
 
-  if (digitalRead(BUTTON_PIN)!=buttonState)
-  {
-    delay(50);
-  }
+//   if (digitalRead(BUTTON_PIN)!=buttonState)
+//   {
+//     delay(50);
+//   }
 
-  if (digitalRead(BUTTON_PIN)!=buttonState)
-  {
-    isPressButton = true;
-    buttonState=!buttonState;
-  }
+//   if (digitalRead(BUTTON_PIN)!=buttonState)
+//   {
+//     isPressButton = true;
+//     buttonState=!buttonState;
+//   }
 
-  return isPressButton;
-}
+//   return isPressButton;
+// }
 
 void shift()
 {
