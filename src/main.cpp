@@ -10,6 +10,7 @@ void effect2();
 void effect3();
 bool isPressed();
 void keyPressed();
+void debounceTime();
 
 GenericFP effects[3] = {&effect1, &effect2, &effect3}; //create an array of 'GenericFP' function pointers. Notice the '&' operator
 
@@ -25,6 +26,7 @@ CRGB strip[LED_COUNT];
 
 bool buttonState;
 int currentEffectIndex;
+int debounceTimeCounter;
 
  
 void setup()
@@ -40,6 +42,7 @@ void setup()
   buttonState = false;
 
   currentEffectIndex = 0;
+  debounceTimeCounter = 0;
 
 
   attachInterrupt(BUTTON_PIN, keyPressed, HIGH);
@@ -51,8 +54,23 @@ void setup()
 void keyPressed()
 {
   Serial.println("pressed");
-  //timer1_attachInterrupt(kl);
-  //timer1_enable(TIM_DIV256,)
+  timer1_attachInterrupt(debounceTime);
+  timer1_enable(TIM_DIV256, TIM_EDGE, TIM_LOOP);
+
+}
+
+void debounceTime()
+{
+  debounceTimeCounter++;
+
+  if (debounceTimeCounter==10000)
+  {
+    debounceTimeCounter=0;
+    timer1_disable();
+
+    Serial.println("debunced");
+  }
+
 }
 
 void loop()
