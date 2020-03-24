@@ -28,11 +28,15 @@ bool buttonState;
 int currentEffectIndex;
 int debounceTimeCounter;
 
+bool doBreaked;
+
+
+long startTimer;
+
  
 void setup()
 {
-
-  delay(3000);
+  delay(7000);
 
   // Добавляем ленту
   FastLED.addLeds<WS2812B, LED_PIN, RGB>(strip, LED_COUNT);
@@ -44,70 +48,49 @@ void setup()
   currentEffectIndex = 0;
   debounceTimeCounter = 0;
 
+  doBreaked = false;
 
-  //attachInterrupt(BUTTON_PIN, keyPressed, HIGH);
 
   Serial.begin(115200);
 
+  attachInterrupt(BUTTON_PIN, keyPressed, HIGH);
 }
 
-// void keyPressed()
-// {
-//   Serial.println("pressed");
-//   //timer1_attachInterrupt(debounceTime);
-//   //timer1_enable(TIM_DIV256, TIM_EDGE, TIM_LOOP);
+ void ICACHE_RAM_ATTR keyPressed()
+ {
+    timer1_isr_init();
+    timer1_attachInterrupt(debounceTime);
+    timer1_enable(TIM_DIV256, TIM_EDGE, TIM_LOOP);
+    timer1_write(10000);
+ }
 
-// }
+ void ICACHE_RAM_ATTR debounceTime()
+ {
+   if (digitalRead(BUTTON_PIN)==HIGH)
+   {
+     Serial.println(millis() - startTimer);
+     Serial.println("pressed");
+     doBreaked = true;
 
-// void debounceTime()
-// {
-//   debounceTimeCounter++;
-
-//   if (debounceTimeCounter==10000)
-//   {
-//     debounceTimeCounter=0;
-//     timer1_disable();
-
-//     Serial.println("debunced");
-//   }
-
-// }
+     timer1_disable();
+   }
+ }
 
 void loop()
 {
-  
-  // if (isPressed())
-  // {
-  //   currentEffectIndex++;
+   if (  doBreaked )
+   {
+     currentEffectIndex++;
 
-  //   if (currentEffectIndex==sizeof(effects) / sizeof(int))
-  //   {
-  //     currentEffectIndex = 0;
-  //   }
-  // }
+     if (currentEffectIndex==sizeof(effects) / sizeof(int))
+     {
+       currentEffectIndex = 0;
+    }
+    doBreaked = false;
+   }
   
-  Serial.println("pressed");
-
   effects[currentEffectIndex]();
 }
-
-// bool isPressed()
-// {
-//   bool isPressButton = false;
-
-//   if (digitalRead(BUTTON_PIN)!=buttonState)
-//   {
-//     delay(50);
-//   }
-
-//   if (digitalRead(BUTTON_PIN)!=buttonState)
-//   {
-//     isPressButton = true;
-//     buttonState=!buttonState;
-//   }
-
-//   return isPressButton;
-// }
 
 void shift()
 {
@@ -127,6 +110,52 @@ void effect1()
   FastLED.show();
 
   int i=0;
+  while(i<LED_COUNT)
+  {
+    int position = random16(LED_COUNT);
+
+    if (strip[position])
+    {
+      continue;
+    }
+
+     strip[position]=CRGB(random8(255),1,1);
+    i++;
+    FastLED.show();
+
+    if (doBreaked)
+    {
+      for (int i = 0; i < LED_COUNT; i++)
+      {
+        strip[i] = CRGB::Black; // Черный цвет, т.е. выключено.
+      }
+      // Передаем цвета ленте.
+      FastLED.show();
+      return;
+    }
+    delay(50);
+  }
+  // Ждем 500 мс.
+  delay(500);
+  // Выключаем все светодиоды.
+  for (int i = 0; i < LED_COUNT; i++)
+  {
+    strip[i] = CRGB::Black; // Черный цвет, т.е. выключено.
+  }
+  // Передаем цвета ленте.
+  FastLED.show();
+}
+
+void effect2()
+{
+   for (int i = 0; i < LED_COUNT; i++)
+  {
+    strip[i] = CRGB::Black; // Красный цвет.
+  }
+
+  FastLED.show();
+
+  int i=0;
 
 
   while(i<LED_COUNT)
@@ -138,9 +167,24 @@ void effect1()
       continue;
     }
 
-    strip[position]=CRGB(random8(255),random8(255),random8(255));
+     strip[position]=CRGB(1, random8(255),1);
     i++;
     FastLED.show();
+
+    if (doBreaked)
+    {
+        for (int i = 0; i < LED_COUNT; i++)
+  {
+    strip[i] = CRGB::Black; // Черный цвет, т.е. выключено.
+  }
+  // Передаем цвета ленте.
+  FastLED.show();
+  
+      return;
+    }
+
+
+
     delay(50);
   }
 
@@ -154,17 +198,48 @@ void effect1()
   // Передаем цвета ленте.
   FastLED.show();
 }
-
-
-void effect2()
+void effect3()
 {
-    // Включаем все светодиоды.
-  for (int i = 0; i < LED_COUNT; i++)
+    for (int i = 0; i < LED_COUNT; i++)
   {
-    strip[i] = CRGB::Red; // Красный цвет.
+    strip[i] = CRGB::Black; // Красный цвет.
+  }
+
+  FastLED.show();
+
+  int i=0;
+
+
+  while(i<LED_COUNT)
+  {
+    int position = random16(LED_COUNT);
+
+    if (strip[position])
+    {
+      continue;
+    }
+
+     strip[position]=CRGB(1,1,random8(255));
+    i++;
+    FastLED.show();
+
+    if (doBreaked)
+    {
+        for (int i = 0; i < LED_COUNT; i++)
+  {
+    strip[i] = CRGB::Black; // Черный цвет, т.е. выключено.
   }
   // Передаем цвета ленте.
   FastLED.show();
+  
+      return;
+    }
+
+
+
+    delay(50);
+  }
+
   // Ждем 500 мс.
   delay(500);
   // Выключаем все светодиоды.
@@ -174,17 +249,4 @@ void effect2()
   }
   // Передаем цвета ленте.
   FastLED.show();
-  // Ждем 500 мс.
-  delay(500);
-}
-void effect3()
-{
-  for (int i = 0; i < LED_COUNT; i++)
-  {
-    strip[i] = CRGB::Black; // Черный цвет, т.е. выключено.
-  }
-  // Передаем цвета ленте.
-  FastLED.show();
-  // Ждем 500 мс.
-  delay(500);
 }
