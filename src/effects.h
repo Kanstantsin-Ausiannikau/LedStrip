@@ -6,7 +6,6 @@
 
 #define LED_PIN 13
 
-
 //CRGB strip[LED_COUNT];
 void SnowSparkle(CRGB strip[], byte red, byte green, byte blue, int SparkleDelay, int SpeedDelay);
 void setAll(CRGB strip[], byte red, byte green, byte blue);

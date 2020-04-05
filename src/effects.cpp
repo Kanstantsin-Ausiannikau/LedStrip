@@ -1,5 +1,6 @@
 #include "FastLED.h"
 #include <Arduino.h>
+#include "settings.h"
 
 void SnowSparkle(CRGB strip[], byte red, byte green, byte blue, int SparkleDelay, int SpeedDelay);
 void setAll(CRGB strip[], byte red, byte green, byte blue);
@@ -9,7 +10,6 @@ void Fire(CRGB strip[], int Cooling, int Sparking, int SpeedDelay);
 void setPixelHeatColor(CRGB strip[], int Pixel, byte temperature);
 void rainbowCycle(CRGB strip[], int SpeedDelay);
 byte *Wheel(byte WheelPos);
-
 
 void SnowSparkle(CRGB strip[], byte red, byte green, byte blue, int SparkleDelay, int SpeedDelay)
 {
@@ -30,7 +30,7 @@ void setAll(CRGB strip[], byte red, byte green, byte blue)
 {
   for (int i = 0; i < (FastLED.size()); i++)
   {
-     setPixel(strip, i, red, green, blue);
+    setPixel(strip, i, red, green, blue);
   }
   showStrip();
 }
@@ -50,7 +50,6 @@ void showStrip()
 void Fire(CRGB strip[], int Cooling, int Sparking, int SpeedDelay)
 {
 
-  
   static byte heat[180];
   int cooldown;
 
@@ -126,6 +125,14 @@ void rainbowCycle(CRGB strip[], int SpeedDelay)
   { // 5 cycles of all colors on wheel
     for (i = 0; i < FastLED.size(); i++)
     {
+      if (isBreaked)
+      {
+        Serial.println("returning");
+        //currentEffectIndex++;
+        setAll(strip, 0, 0, 0);
+        
+        return;
+      }
       c = Wheel(((i * 256 / FastLED.size()) + j) & 255);
       setPixel(strip, i, *c, *(c + 1), *(c + 2));
     }

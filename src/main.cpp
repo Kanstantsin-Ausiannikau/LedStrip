@@ -6,6 +6,7 @@
 #include <WiFiUdp.h>
 #include <ArduinoOTA.h>
 #include <EEPROM.h>
+#include "settings.h"
 
 #ifndef STASSID
 //#define STASSID "TP-Link_DB4C"
@@ -17,6 +18,8 @@
 
 const char* ssid = STASSID;
 const char* password = STAPSK;
+
+
 
 // Подключаем библиотеку FastLED.
 
@@ -45,18 +48,22 @@ GenericFP effects[5] = {&effect1, &effect2, &effect3, &effect4, &effect5}; //cre
 CRGB strip[LED_COUNT];
 
 bool buttonState;
-int currentEffectIndex;
+
 int debounceTimeCounter;
 
-bool doBreaked;
+//bool doBreaked;
 
 long startTimer;
 
 void setup()
 {
-  delay(3000);
+  delay(500);
 
-    Serial.begin(115200);
+  
+
+
+
+  Serial.begin(115200);
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
   while (WiFi.waitForConnectResult() != WL_CONNECTED) {
@@ -106,7 +113,7 @@ void setup()
   //currentEffectIndex = 0;
   debounceTimeCounter = 0;
 
-  doBreaked = false;
+  //doBreaked = false;
 
 
 
@@ -126,9 +133,16 @@ void ICACHE_RAM_ATTR debounceTime()
   if (digitalRead(BUTTON_PIN) == HIGH)
   {
     Serial.println(millis() - startTimer);
-    doBreaked = true;
+    //doBreaked = true;
+
+    isBreaked = true;
+
+
+
     timer1_disable();
     currentEffectIndex++;
+
+    Serial.println("pressed");
     //EEPROM.write(0, currentEffectIndex);
     //EEPROM.commit();
     //system_restart();
@@ -139,8 +153,10 @@ void loop()
 {
   ArduinoOTA.handle();
 
-  if (doBreaked)
+  //if (doBreaked)
+  if (isBreaked)
   {
+    Serial.println("Switch to new effect");
     //currentEffectIndex++;
 
     if (currentEffectIndex == sizeof(effects) / sizeof(int))
@@ -148,19 +164,21 @@ void loop()
       currentEffectIndex = 0;
     }
 
-    doBreaked = false;
+    //doBreaked = false;
+
+    isBreaked = false;
   }
 
   effects[currentEffectIndex]();
 }
 
-void shift()
-{
-  for (int i = LED_COUNT; i > 0; i--)
-  {
-    strip[i] = strip[i - 1];
-  }
-}
+// void shift()
+// {
+//   for (int i = LED_COUNT; i > 0; i--)
+//   {
+//     strip[i] = strip[i - 1];
+//   }
+// }
 
 void effect1()
 {
